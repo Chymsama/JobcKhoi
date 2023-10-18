@@ -80,13 +80,23 @@ public class VerifyServlet extends HttpServlet {
         int id = -1;
         if (inputcode.equals(session.getAttribute("codetest")) && "User".equals(session.getAttribute("role"))) {
             User u = new User(emaildont, passdont);
+            if(u.isDupplicatedAccount()){
+                request.setAttribute("inputError", "Account is used. Try another one!");
+                request.getRequestDispatcher("signup.jsp").forward(request, response);
+            }
             id = u.addNew();
         } else if (inputcode.equals(session.getAttribute("codetest")) && "Enterprise".equals(session.getAttribute("role"))) {
             Enterprise e = new Enterprise(emaildont, passdont);
+            if(e.isDupplicatedAccount()){
+                request.setAttribute("inputEnrror", "Account is used. Try another one!");
+            }
             id = e.addNew();
+        } else if(!inputcode.equals(session.getAttribute("codetest"))){
+            request.setAttribute("inputError", "Incorrect code");
+            request.getRequestDispatcher("Verify.jsp").forward(request, response);
         }
 
-        request.getRequestDispatcher("index.html").forward(request, response);
+        request.getRequestDispatcher("Login.jsp").forward(request, response);
     }
 
     /**
